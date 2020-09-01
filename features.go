@@ -32,6 +32,8 @@ func New(client *mongo.Client) *Features {
 	return f
 }
 
+// Features provides a selection of boolean switches for detection of mongodb
+// features.
 type Features struct {
 	// HasSessions returns whether the mongo connected to supports the use of
 	// server sessions via the mongo driver `mongo.NewSession`.
