@@ -31,10 +31,10 @@ func main() {
 		panic(err)
 	}
 
-	feat := features.New(client)
-	fmt.Printf("I am running on mongo major version: %s\n", feat.Version.Major())
-	fmt.Printf("I am running on mongo minor version: %s\n", feat.Version.Minor())
-	fmt.Printf("I am running on mongo version: %s\n", feat.Version.String())
-	fmt.Printf("I can perform server sessions: %t\n", feat.Sessions)
-	fmt.Printf("I can perform multi-document acid transactions: %t\n", feat.Transactions)
+	featureSet := features.New(client)
+	fmt.Printf("I am running on mongo major version: %d\n", featureSet.MongoVersion.Major())
+	fmt.Printf("I am running on mongo minor version: %d\n", featureSet.MongoVersion.Minor())
+	fmt.Printf("I am running on mongo version: %s\n", featureSet.MongoVersion.String())
+	fmt.Printf("I can perform server sessions: %t\n", featureSet.HasSessions)
+	fmt.Printf("I can perform multi-document acid transactions: %t\n", featureSet.HasTransactions)
 }

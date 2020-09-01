@@ -12,26 +12,26 @@ Refer: [_examples/tldr](./_examples/tldr)
 package main
 
 import (
-    "context"
+	"context"
+	"fmt"
 
-    "go.mongodb.org/mongo-driver/bson"
-    "go.mongodb.org/mongo-driver/mongo"
-    "github.com/matthewhartstonge/mongo-features"
+	"github.com/matthewhartstonge/mongo-features"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 func main() {
-    ctx := context.Background()
-    client, err := mongo.Connect(ctx)
-    if err != nil {
-        panic(err)
-    }
+	ctx := context.Background()
+	client, err := mongo.Connect(ctx)
+	if err != nil {
+		panic(err)
+	}
 
-    feat := features.New(client)
-    fmt.Printf("I am running on mongo major version: %s\n", feat.Version.Major())
-    fmt.Printf("I am running on mongo minor version: %s\n", feat.Version.Minor())
-    fmt.Printf("I am running on mongo version: %s\n", feat.Version.String())
-    fmt.Printf("I can perform server sessions: %t\n", feat.Sessions)
-    fmt.Printf("I can perform multi-document acid transactions: %t\n", feat.Transactions)
+	featureSet := features.New(client)
+	fmt.Printf("I am running on mongo major version: %d\n", featureSet.MongoVersion.Major())
+	fmt.Printf("I am running on mongo minor version: %d\n", featureSet.MongoVersion.Minor())
+	fmt.Printf("I am running on mongo version: %s\n", featureSet.MongoVersion.String())
+	fmt.Printf("I can perform server sessions: %t\n", featureSet.HasSessions)
+	fmt.Printf("I can perform multi-document acid transactions: %t\n", featureSet.HasTransactions)
 }
 ```
 
@@ -53,7 +53,7 @@ import (
 type Store struct {
 	db *mongo.Database
 
-	mongo *feat.Features
+	*feat.Features
 }
 
 type thing struct {
@@ -61,7 +61,7 @@ type thing struct {
 }
 
 func (s *Store) CreateThing(ctx context.Context, thing1 thing) {
-	if s.mongo.Sessions {
+	if s.HasSessions {
 		sess, err := s.db.Client().StartSession()
 		if err != nil {
 			panic(err)
@@ -73,7 +73,6 @@ func (s *Store) CreateThing(ctx context.Context, thing1 thing) {
 	// like, totally put your transact-able actions in here...
 }
 
-
 func New() *Store {
 	ctx := context.Background()
 	client, err := mongo.Connect(ctx)
@@ -83,17 +82,17 @@ func New() *Store {
 
 	testDb := client.Database("test")
 	return &Store{
-		db:    testDb,
-		mongo: feat.New(client),
+		db:       testDb,
+		Features: feat.New(client),
 	}
 }
 
 func main() {
 	store := New()
-	fmt.Printf("My datastore is running on mongo major version: %d\n", store.mongo.Version.Major())
-	fmt.Printf("My datastore is running on mongo minor version: %d\n", store.mongo.Version.Minor())
-	fmt.Printf("My datastore is running on mongo version: %s\n", store.mongo.Version.String())
-	fmt.Printf("My datastore can perform server sessions: %t\n", store.mongo.Sessions)
-	fmt.Printf("My datastore can perform multi-document acid transactions: %t\n", store.mongo.Transactions)
+	fmt.Printf("My datastore is running on mongo major version: %d\n", store.MongoVersion.Major())
+	fmt.Printf("My datastore is running on mongo minor version: %d\n", store.MongoVersion.Minor())
+	fmt.Printf("My datastore is running on mongo version: %s\n", store.MongoVersion.String())
+	fmt.Printf("My datastore can perform server sessions: %t\n", store.HasSessions)
+	fmt.Printf("My datastore can perform multi-document acid transactions: %t\n", store.HasTransactions)
 }
 ```
