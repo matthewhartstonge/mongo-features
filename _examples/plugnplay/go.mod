@@ -1,4 +1,4 @@
-module github.com/matthewhartstonge/mongo-feat/plugnplay
+module github.com/matthewhartstonge/mongo-features/plugnplay
 
 go 1.13
 

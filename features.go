@@ -32,24 +32,26 @@ func New(client *mongo.Client) *Features {
 	return f
 }
 
+// Features provides a selection of boolean switches for detection of mongodb
+// features.
 type Features struct {
-	// Sessions returns whether the mongo connected to supports the use of
+	// HasSessions returns whether the mongo connected to supports the use of
 	// server sessions via the mongo driver `mongo.NewSession`.
 	//
 	// Server sessions are only supported on a mongo replica/sharded set enabled
 	// via the --replSet switch on `mongod`.
 	//
 	// Refer: https://docs.mongodb.com/manual/reference/server-sessions/
-	Sessions bool
+	HasSessions bool
 
-	// Transactions returns whether the mongo connected to supports Distributed
+	// HasTransactions returns whether the mongo connected to supports Distributed
 	// Transactions/Multi-Document Transactions.
 	//
 	// Refer: https://docs.mongodb.com/manual/core/transactions/
-	Transactions bool
+	HasTransactions bool
 
-	// Version returns the semver version of mongo connected to.
-	Version *semver.Version
+	// MongoVersion returns the semver version of mongo connected to.
+	MongoVersion *semver.Version
 }
 
 func (f *Features) init(c *mongo.Client) {
@@ -76,11 +78,11 @@ func (f *Features) getVersion(ctx context.Context, adminDB *mongo.Database) {
 	var result buildInfo
 	err := adminDB.RunCommand(ctx, cmd).Decode(&result)
 	if err != nil {
-		f.Version = &semver.Version{}
+		f.MongoVersion = &semver.Version{}
 		return
 	}
 
-	f.Version = semver.MustParse(result.Version)
+	f.MongoVersion = semver.MustParse(result.Version)
 }
 
 // Sessions returns whether the mongo connected to supports the use of
@@ -91,7 +93,7 @@ func (f *Features) getVersion(ctx context.Context, adminDB *mongo.Database) {
 //
 // Refer: https://docs.mongodb.com/manual/reference/server-sessions/
 func (f *Features) canSession(ctx context.Context, adminDB *mongo.Database) {
-	f.Sessions = true
+	f.HasSessions = true
 
 	cmd := bson.D{
 		{
@@ -103,7 +105,7 @@ func (f *Features) canSession(ctx context.Context, adminDB *mongo.Database) {
 	if res.Err() != nil {
 		if mErr, ok := res.Err().(mongo.CommandError); ok {
 			if mErr.Code == 76 {
-				f.Sessions = false
+				f.HasSessions = false
 			}
 		}
 	}
@@ -117,7 +119,7 @@ func (f *Features) canSession(ctx context.Context, adminDB *mongo.Database) {
 func (f *Features) canTransact() {
 	mongoV4 := semver.MustParse("4.0.0")
 
-	if f.Version.GreaterThan(mongoV4) {
-		f.Transactions = true
+	if f.MongoVersion.GreaterThan(mongoV4) {
+		f.HasTransactions = true
 	}
 }

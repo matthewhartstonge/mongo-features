@@ -27,7 +27,7 @@ import (
 type Store struct {
 	db *mongo.Database
 
-	mongo *feat.Features
+	*feat.Features
 }
 
 type thing struct {
@@ -35,7 +35,7 @@ type thing struct {
 }
 
 func (s *Store) CreateThing(ctx context.Context, thing1 thing) {
-	if s.mongo.Sessions {
+	if s.HasSessions {
 		sess, err := s.db.Client().StartSession()
 		if err != nil {
 			panic(err)
@@ -56,16 +56,16 @@ func New() *Store {
 
 	testDb := client.Database("test")
 	return &Store{
-		db:    testDb,
-		mongo: feat.New(client),
+		db:       testDb,
+		Features: feat.New(client),
 	}
 }
 
 func main() {
 	store := New()
-	fmt.Printf("My datastore is running on mongo major version: %d\n", store.mongo.Version.Major())
-	fmt.Printf("My datastore is running on mongo minor version: %d\n", store.mongo.Version.Minor())
-	fmt.Printf("My datastore is running on mongo version: %s\n", store.mongo.Version.String())
-	fmt.Printf("My datastore can perform server sessions: %t\n", store.mongo.Sessions)
-	fmt.Printf("My datastore can perform multi-document acid transactions: %t\n", store.mongo.Transactions)
+	fmt.Printf("My datastore is running on mongo major version: %d\n", store.MongoVersion.Major())
+	fmt.Printf("My datastore is running on mongo minor version: %d\n", store.MongoVersion.Minor())
+	fmt.Printf("My datastore is running on mongo version: %s\n", store.MongoVersion.String())
+	fmt.Printf("My datastore can perform server sessions: %t\n", store.HasSessions)
+	fmt.Printf("My datastore can perform multi-document acid transactions: %t\n", store.HasTransactions)
 }

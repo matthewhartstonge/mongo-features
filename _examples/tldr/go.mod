@@ -1,4 +1,4 @@
-module github.com/matthewhartstonge/mongo-feat/tldr
+module github.com/matthewhartstonge/mongo-features/tldr
 
 go 1.13
 
