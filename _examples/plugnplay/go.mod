@@ -6,6 +6,6 @@ go 1.13
 replace github.com/matthewhartstonge/mongo-features => ../../../mongo-features
 
 require (
-	github.com/matthewhartstonge/mongo-features v0.1.0
+	github.com/matthewhartstonge/mongo-features v0.4.0
 	go.mongodb.org/mongo-driver v1.4.0
 )

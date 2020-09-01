@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Changed
 - CHANGELOG.md: adds dates to release versions.
+- features: makes `canSession()` checking smarter.
+
+### Fixed
+- deps: reverts to `semver@1.5.0` for `dep` and `go mod` compatibility.
 
 ## [v0.3.0] - 2020-09-01
 ### Added

@@ -19,7 +19,7 @@ package features
 import (
 	"context"
 
-	semver "github.com/Masterminds/semver/v3"
+	"github.com/Masterminds/semver"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -85,6 +85,11 @@ func (f *Features) getVersion(ctx context.Context, adminDB *mongo.Database) {
 	f.MongoVersion = semver.MustParse(result.Version)
 }
 
+type replInfo struct {
+	// Ok returns whether the replSet is ready.
+	Ok bool
+}
+
 // Sessions returns whether the mongo connected to supports the use of
 // server sessions via the mongo driver `mongo.NewSession`.
 //
@@ -93,22 +98,21 @@ func (f *Features) getVersion(ctx context.Context, adminDB *mongo.Database) {
 //
 // Refer: https://docs.mongodb.com/manual/reference/server-sessions/
 func (f *Features) canSession(ctx context.Context, adminDB *mongo.Database) {
-	f.HasSessions = true
-
 	cmd := bson.D{
 		{
 			Key:   "replSetGetStatus",
 			Value: 1,
 		},
 	}
-	res := adminDB.RunCommand(ctx, cmd)
-	if res.Err() != nil {
-		if mErr, ok := res.Err().(mongo.CommandError); ok {
-			if mErr.Code == 76 {
-				f.HasSessions = false
-			}
-		}
+	var result replInfo
+	err := adminDB.RunCommand(ctx, cmd).Decode(&result)
+	if err != nil {
+		// assume we don't have session support on error..
+		// error code 76 will be thrown if replSet is not enabled.
+		return
 	}
+
+	f.HasSessions = result.Ok
 }
 
 // canTransact checks whether the mongo connected to supports Distributed
