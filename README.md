@@ -1,5 +1,7 @@
 # mongo-features
 
+[![PkgGoDev](https://pkg.go.dev/badge/github.com/matthewhartstonge/mongo-features)](https://pkg.go.dev/github.com/matthewhartstonge/mongo-features) [![Go Report Card](https://goreportcard.com/badge/github.com/matthewhartstonge/mongo-features)](https://goreportcard.com/report/github.com/matthewhartstonge/mongo-features)
+
 The official mongo driver is great - but it's a bit more low level than the mgo
 community driver, so we need to check whether certain mongo features can be 
 used. 

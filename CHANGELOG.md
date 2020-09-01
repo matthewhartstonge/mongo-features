@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - `store.Sessions` => `store.HasSessions`
     - `store.Transactions` => `store.HasTransactions`
     - `store.Version` => `store.MongoVersion`
+- features: documents `Features` struct.
+- README.md: adds badges.
 
 ### Fixes
 - _examples: fixes go mod name.
