@@ -1,4 +1,4 @@
-module github.com/matthewhartstonge/mongo-feat
+module github.com/matthewhartstonge/mongo-features
 
 go 1.13
 
