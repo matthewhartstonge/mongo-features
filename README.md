@@ -8,6 +8,9 @@ used.
 
 Enter `mongo (feat. features)`.
 
+> Session detection requires the consumer to have `clusterMonitor` mongodb permissions.
+> Sessions should work on a single node, but there is [an in progress fix for this](https://github.com/mongodb/mongo-go-driver/pull/497).
+
 ## tl;dr
 Refer: [_examples/tldr](./_examples/tldr)
 ```go
